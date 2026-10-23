@@ -24,7 +24,17 @@ class Models:
         self.upsampler = Upsampler(pup, pup_memory) if pup else None
         shared = WEIGHTS / MODELS[next(iter(dits))]["dit"]  # every weights entry ships the text encoder and autoencoder
         self.pipeline = Pipeline(dits, str(shared / "text_encoder"), str(shared / "ae.safetensors"), offload=offload)
-        self.safety = Safety(self.pipeline.text_encoder, str(WEIGHTS / "nsfw-classifier"), self.upsampler)
+        self._safety = None
+
+    @property
+    def safety(self) -> Safety:
+        if self._safety is None:
+            self._safety = Safety(
+                self.pipeline.text_encoder,
+                str(WEIGHTS / "nsfw-classifier"),
+                self.upsampler,
+            )
+        return self._safety
 
 
 def generate(models: Models, model: str, prompt: str, images: list[Image.Image], boxes: list[dict] | None = None,
