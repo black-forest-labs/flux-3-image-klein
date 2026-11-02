@@ -1,7 +1,14 @@
 # Examples
 
+Start with an image edit. The CLI runs the prompt upsampler with your instruction and reference image before
+Klein generates the result. Keep prompt upsampling enabled for editing, generation and layouts.
+
+```bash
+python scripts/cli.py "put a red bandana around the dog's neck" --model distilled --image examples/inputs/3.png --out bandana.png --seed 22
+```
+
 Fixed seeds, so each command reproduces the file it writes (run from the repo root).
-`inputs/2.png` and `inputs/3.png` are outputs of the first two commands and serve as references for the edits.
+The reproduction commands below create `inputs/2.png` and `inputs/3.png` before using them as edit references.
 Each image's `.json` holds the prompt the model saw.
 
 ```bash
@@ -25,13 +32,13 @@ python scripts/cli.py "add a small potted cactus in the marked spot" --model dis
 
 | | input | base | distilled |
 |---|---|---|---|
-| text-to-image | "A man walking with his dog, afternoon sun" | <img src="base/man_dog.png" width="220"> | <img src="distilled/man_dog.png" width="220"> |
 | figurine | <img src="inputs/1.png" width="220"> | <img src="base/1_figurine.png" width="220"> | <img src="distilled/1_figurine.png" width="220"> |
 | coffee + croissant | <img src="inputs/2.png" width="220"> | <img src="base/2_coffee.png" width="220"> | <img src="distilled/2_coffee.png" width="220"> |
 | red bandana | <img src="inputs/3.png" width="220"> | <img src="base/3_bandana.png" width="220"> | <img src="distilled/3_bandana.png" width="220"> |
 | two references: dog printed on the mug | <img src="inputs/2.png" width="220"> <img src="inputs/3.png" width="220"> | <img src="base/2_3_mugprint.png" width="220"> | <img src="distilled/2_3_mugprint.png" width="220"> |
 | layout: two balloons placed by [boxes](inputs/balloons_boxes.json) | — | <img src="base/balloons.png" width="220"> | <img src="distilled/balloons.png" width="220"> |
 | layout edit: cactus added in a [box](inputs/cactus_boxes.json) | <img src="inputs/2.png" width="220"> | <img src="base/cactus.png" width="220"> | <img src="distilled/cactus.png" width="220"> |
+| text-to-image | "A man walking with his dog, afternoon sun" | <img src="base/man_dog.png" width="220"> | <img src="distilled/man_dog.png" width="220"> |
 
 ## Typography
 

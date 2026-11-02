@@ -6,12 +6,15 @@
 <a href="#demo">Demo</a>
 </p>
 
-This repository contains the reference inference code for [FLUX 3 Image Klein](https://bfl.ai/models/flux-3-image-klein), the 5.6B open weights image model
-from [Black Forest Labs](https://bfl.ai): text-to-image, editing with up to 10 reference images, and layout control
-with bounding boxes, through one model. It ships with a [prompt upsampler](#prompt-upsampling); do not use the model
-without it.
+This repository contains reference inference code for [FLUX 3 Image Klein](https://bfl.ai/models/flux-3-image-klein),
+a 5.6B model with open weights designed for image editing. Edit from an instruction, generate images from text,
+combine up to 10 references, or guide layouts with bounding boxes.
 
-![FLUX 3 Image Klein text-to-image](assets/hero.jpg)
+> [!NOTE]
+> Always run a [prompt upsampler](#prompt-upsampling). It prepares your instruction and reference images for
+> the model and runs by default in the CLI, demo and Python API.
+
+![FLUX 3 Image Klein editing examples](assets/editing.jpg)
 
 ## Performance
 
@@ -33,22 +36,17 @@ Leads in quality and speed among open weights models: the Pareto frontier of Elo
 
 | Need | Recommended |
 |------|-------------|
-| Generation and editing, self-hosting | FLUX 3 Image Klein (distilled): the same model in 16 steps without CFG, about 6x faster |
+| Image editing and generation, self-hosting | FLUX 3 Image Klein (distilled): the same model in 16 steps without CFG, about 6x faster |
 | Fine-tuning, LoRA training, research | FLUX 3 Image Klein Base |
 | An 8 GB GPU (RTX 3070 class) | the int8 files in [ComfyUI](#run-it-elsewhere) |
-
-> [!IMPORTANT]
-> Do not use either model without the [prompt upsampler](#prompt-upsampling). The model is trained on the captions it
-> writes; a prompt sent as typed gives noticeably weaker results. It is on by default in the CLI, the demo and the
-> Python API.
-
-### Text-to-image examples
-
-![Text-to-image examples](assets/t2i.jpg)
 
 ### Editing examples
 
 ![editing](assets/editing.jpg)
+
+### Text-to-image examples
+
+![Text-to-image examples](assets/t2i.jpg)
 
 ### Layout examples
 
@@ -112,27 +110,29 @@ hf download Falconsai/nsfw_image_detection --local-dir weights/nsfw-classifier
 > The commands below send the prompt through the [upsampler](#prompt-upsampling) before the model. Do not pass
 > `--no-pup` unless the prompt already is an upsampler caption ([Smaller GPUs](#smaller-gpus)).
 
-### Text to image
-
-```bash
-python scripts/cli.py "A man walking with his dog, afternoon sun" --model distilled --out out.png --seed 7
-```
-
-Each generated image comes with a `.json` containing the prompt, size, number of steps, guidance value and seed; [examples/README.md](examples/README.md) has the command behind every
-image in this README.
-
 ### Edit an image
 
+The prompt upsampler reads your instruction and reference image before Klein generates the edit:
+
 ```bash
-python scripts/cli.py "put a red bandana around the dog's neck" --image examples/inputs/3.png --out out.png --seed 22
+python scripts/cli.py "put a red bandana around the dog's neck" --model distilled --image examples/inputs/3.png --out out.png --seed 22
 ```
 
 Up to 10 references; the first one sets the output size:
 
 ```bash
 python scripts/cli.py "print the dog from the second image onto the mug" \
-  --image examples/inputs/2.png --image examples/inputs/3.png --out out.png --seed 23
+  --model distilled --image examples/inputs/2.png --image examples/inputs/3.png --out out.png --seed 23
 ```
+
+### Text to image
+
+```bash
+python scripts/cli.py "A man walking with his dog, afternoon sun" --model distilled --out out.png --seed 7
+```
+
+Each generated image comes with a `.json` containing the prompt, size, number of steps, guidance value and seed;
+[examples/README.md](examples/README.md) has the command behind every image in this README.
 
 ### Place elements with bounding boxes
 
@@ -170,12 +170,12 @@ from flux3.pipeline import WEIGHTS, dit_path
 
 models = Models({"distilled": str(dit_path("distilled"))}, pup=str(WEIGHTS / "pup"), pup_memory=0.35)
 
-image, record = generate(models, "distilled", "a red bicycle leaning on a white wall", images=[], seed=1)
-image.save("bicycle.png")
-
 image, record = generate(models, "distilled", "put a red bandana around the dog's neck",
                          images=[Image.open("examples/inputs/3.png")], seed=22)
 image.save("bandana.png")
+
+image, record = generate(models, "distilled", "a red bicycle leaning on a white wall", images=[], seed=1)
+image.save("bicycle.png")
 ```
 
 `Models` loads once; `generate` also takes `boxes`, `width`, `height`, `steps`, `guidance`, `pup`, `safety`.
