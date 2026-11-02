@@ -10,10 +10,9 @@ This repository contains reference inference code for [FLUX 3 Image Klein](https
 a 5.6B model with open weights designed for image editing. Edit from an instruction, generate images from text,
 combine up to 10 references, or guide layouts with bounding boxes.
 
-> [!IMPORTANT]
-> Use Klein with its [prompt upsampler](#prompt-upsampling). It prepares your instruction and reference images for
-> the model and runs by default in the CLI, demo and Python API. Prompt upsampling is an essential part of the
-> workflow, not an optional enhancement.
+> [!NOTE]
+> Always run a [prompt upsampler](#prompt-upsampling). It prepares your instruction and reference images for
+> the model and runs by default in the CLI, demo and Python API.
 
 ![FLUX 3 Image Klein editing examples](assets/editing.jpg)
 
