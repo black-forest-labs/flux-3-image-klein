@@ -7,8 +7,8 @@
 </p>
 
 This repository contains reference inference code for [FLUX 3 Image Klein](https://bfl.ai/models/flux-3-image-klein),
-a 5.6B model with open weights designed for image editing. Edit from an instruction, combine up to 10 reference
-images, or guide changes with bounding boxes. It also generates images from text.
+a 5.6B model with open weights designed for image editing. Edit from an instruction, generate images from text,
+combine up to 10 references, or guide layouts with bounding boxes.
 
 > [!IMPORTANT]
 > Use Klein with its [prompt upsampler](#prompt-upsampling). It prepares your instruction and reference images for
